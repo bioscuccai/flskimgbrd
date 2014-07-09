@@ -1,0 +1,81 @@
+{%extends "mainpage.html"%}
+{%block main%}
+<header style="text-align:center"><h1>/{{board.short_name}}/ - {{board.name}}</h1></header>
+<div style="text-align:center">
+	New thread:<br>
+	<form method="post" action="/addthread/{{board.short_name}}" enctype="multipart/form-data">
+	name: {{form.name}}<br>
+	title: {{form.title}}<br>
+	post: {{form.post}}<br>
+	image: {{form.image}}<br>
+	<input type="submit">
+	</form>
+	{% with messages=get_flashed_messages() %}
+	{% if messages %}
+	<ul>
+	{% for m in messages %}
+		<li>{{m}}</li>
+	{% endfor %}
+	</ul>
+	{% endif %}
+{% endwith %}
+</div>
+{% for t in threads %}
+	{% with p=t.iposts.first() %}
+		<p>
+			{% if user.name %}
+				[ <a href="/delete_thread/{{t.id}}">DELETE</a> ]
+			{% endif %}
+			<span style="color: blue">{{p.title}}</span>
+			<span style="color: green">{{p.name}}</span>
+			{{p.title}} {{p.time}}
+			No. <a href="#">{{p.id}}</a>
+			[ <a href="/thread/{{p.ithread.id}}">Reply</a> ]
+		</p>
+		<p>
+		{% if p.origfile %}
+			<a href="{{p.imgpath()}}"><img src="{{p.thumbpath()}}" style="float:left"></a>
+		{% endif %}
+		{{p.post}}
+		</p>
+	{% endwith %}
+	{% for p in t.iposts.order_by("time desc").limit(5)|reverse %}
+		{% if p != t.iposts.first() %}
+			<div>
+				<div style="float: left">
+					&gt;&gt;&nbsp;&nbsp;
+				</div>
+				<div style="background-color: cyan; padding: 2px 2px 2px 2px; display:table">
+					<p>
+						{% if user.name %}
+							[ <a href="/delete_post/{{p.id}}">DELETE</a> ]
+						{% endif %}
+						<span style="color: blue">{{p.title}}</span>
+						<span style="color: green">{{p.name}}</span>
+						{{p.title}} {{p.time}}
+						No. <a href="#">{{p.id}}</a>
+					</p>
+					<p>
+						{% if p.origfile %}
+							File: {{p.origfile}} ({{p.imgfilesize()}} byte, {{p.imgsize()}})<br>
+							<a href="{{p.imgpath()}}"><img src="{{p.thumbpath()}}" style="float:left"></a>
+						{% endif %}
+						{{p.quotedpost(forceurl=True)|safe}}
+					</p>
+				</div>
+			</div>
+		{% endif %}
+		<br>
+	{% endfor %}
+	<hr style="clear:both">
+{% endfor %}
+<div>Pages: 
+{% for p in pages %}
+	{% if p == curr_page %}
+		[ <b>{{p}}</b> ] 
+	{% else %}
+		[ <a href="/board/{{board.short_name}}?p={{p}}">{{p}}</a> ]
+	{% endif %}
+{% endfor %}
+</div>
+{%endblock%}

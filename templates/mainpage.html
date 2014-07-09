@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+p{margin: 0px, 0px, 0px, 0px}
+img{margin: 3px, 3px, 3px, 3px}
+</style>
+</head>
+<body>
+Boards: {% for b in boards %}
+	[ <a href="/board/{{b.short_name}}" alt="{{b.name}}">/{{b.short_name}}/</a> ]&nbsp;&nbsp;
+{% endfor %}
+{% if user.name %}
+	<div style="float:right">
+	logged in as {{user.name}} [ <a href="/admin">admin</a> ][ <a href="/logout">logout</a> ]
+	</div>
+{% endif %}
+<br>
+{% block main %}
+{%endblock%}
+{%block js%}
+{%endblock%}
+</body>
+</html>

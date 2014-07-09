@@ -1,0 +1,45 @@
+{% extends "mainpage.html" %}
+{%block main%}
+<ul>
+{% for b in boards %}
+	<li><a href="board/{{b.short_name}}">/{{b.short_name}}/ - {{b.name}}</a> [ <a href="/delete_board/{{b.id}}">DELETE</a> ]</li>
+{% endfor %}
+</ul>
+{% with messages=get_flashed_messages() %}
+	{%if messages%}
+		<ul>
+		{% for m in messages %}
+			<li>{{m}}</li>
+		{% endfor %}
+		</ul>
+	{%endif%}
+{% endwith %}
+<br>
+new board:<br>
+<form method="post" action="/addboard">
+name: {{form.name}}<br>
+short name: {{form.short_name}}<br>
+<input type="submit" value="new board">
+</form>
+<hr>
+change password:<br>
+<form action="/change_password" method="post">
+old password: {{pwform.oldpassword}}<br>
+new password: {{pwform.password}}<br>
+new password again: {{pwform.password2}}<br>
+<input type="submit" value="change password">
+</form>
+<hr>
+users:
+<ul>
+{% for u in users %}
+	<li>{{u.name}}</li>
+{% endfor %}
+</ul>
+add user:<br>
+<form method="post" action="/add_user">
+name: {{regform.name}}<br>
+password: {{regform.password}}<br>
+<input type="submit" value="register">
+</form>
+{%endblock%}

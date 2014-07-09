@@ -1,0 +1,8 @@
+{%extends "mainpage.html" %}
+{%block main%}
+<form method='post' action='/login'>
+	name: {{form.name}}<br>
+	password: {{form.password}}<br>
+	<input type='submit' value="login">
+</form>{{user.name}}
+{%endblock%}

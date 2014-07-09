@@ -1,0 +1,81 @@
+{% extends "mainpage.html"%}
+{% block main %}
+<div style="text-align:center">
+<h1>/{{thr.iboard.short_name}}/ - {{thr.iboard.name}}</h1>
+new post:<br>
+<form method="post" action="/addpost/{{thread_id}}" enctype="multipart/form-data">
+	name: {{form.name}}<br>
+	title: {{form.title}}<br>
+	post: {{form.post}}<br>
+	image: {{form.image}}<br>
+
+<input type="submit">
+</form>
+{% with messages=get_flashed_messages() %}
+	{% if messages %}
+	<ul>
+	{% for m in messages %}
+		<li>{{m}}</li>
+	{% endfor %}
+	</ul>
+	{% endif %}
+{% endwith %}
+</div>
+{% with p=thr.iposts.first() %}
+	<p>
+		{% if user.name %}
+			[ <a href="/delete_thread/{{p.ithread.id}}">DELETE</a> ]
+		{% endif %}
+		<span style="color: blue">{{p.title}}</span>
+		<span style="color: green">{{p.name}}</span>
+		{{p.title}} {{p.time}}
+		No. <a href="#">{{p.id}}</a>
+	</p>
+	{% if p.origfile %}
+		File: {{p.origfile}} ({{p.imgfilesize()}} byte, {{p.imgsize()}})<br>
+		<a href="{{p.imgpath()}}"><img src="{{p.thumbpath()}}" style="float:left"></a>
+	{% endif %}
+	{{p.quotedpost()}}
+{% endwith %}
+<br><br>
+{% for p in thr.iposts.order_by("time") %}
+	{% if p != thr.iposts.first() %}
+	<div>
+		<div style="float:left">
+		&gt;&gt;
+		</div>
+		<div style="background-color: cyan; padding: 2px 2px 2px 2px; display:table;">
+			<p>
+				{% if user.name %}
+					[ <a href="/delete_post/{{p.id}}">DELETE</a> ]
+				{% endif %}
+				<span style="color: blue">{{p.title}}</span>
+				<span style="color: green">{{p.name}}</span>
+				{{p.time}}
+				No. <a href="#" class="pnclick">{{p.id}}</a>
+			</p>
+			<p>
+
+			{% if p.origfile %}
+				File: {{p.origfile}} ({{p.imgfilesize()}} byte, {{p.imgsize()}})<br>
+				<a href="{{p.imgpath()}}"><img src="{{p.thumbpath()}}" style="float:left"></a>
+			{% endif %}
+			{{p.quotedpost()|safe}}</p>
+		</div>
+	<div>
+	<br style="clear: both">
+	{% endif %}
+{% endfor %}
+{% endblock %}
+{% block js%}
+<script type="text/javascript">
+	var pnums=document.getElementsByClassName("pnclick");
+	[].forEach.call(pnums, function(e){
+		e.addEventListener("click", function(event){
+			event.preventDefault();
+			var post=document.getElementById("post");
+			post.value+=">>"+this.text;
+		}, false);
+	});
+</script>
+{% endblock %}
