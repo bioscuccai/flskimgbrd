@@ -22,48 +22,53 @@
 </div>
 {% for t in threads %}
 	{% with p=t.iposts.first() %}
-		<p>
+		<div>
 			{% if user.name %}
 				[ <a href="/delete_thread/{{t.id}}">DELETE</a> ]
 			{% endif %}
-			<span style="color: blue">{{p.title}}</span>
-			<span style="color: green">{{p.name}}</span>
+			<span style="color: blue; font-weight:bold">{{p.name}}</span>
+			<span style="color: red; font-weight:bold">{{p.title}}</span>
 			{{p.title}} {{p.time}}
 			No. <a href="#">{{p.id}}</a>
 			[ <a href="/thread/{{p.ithread.id}}">Reply</a> ]
-		</p>
-		<p>
+		</div>
+		<div>
 		{% if p.origfile %}
 			<a href="{{p.imgpath()}}"><img src="{{p.thumbpath()}}" style="float:left"></a>
 		{% endif %}
 		{{p.post}}
-		</p>
+		<div class="threadinfo">
+			{{t.iposts.count()}} posts in total
+		</div>
+		</div>
 	{% endwith %}
-	{% for p in t.iposts.order_by("time desc").limit(5)|reverse %}
+	{% for p in t.iposts.order_by("time desc").limit(config['PREVIEW_POSTS'])|reverse %}
 		{% if p != t.iposts.first() %}
-			<div>
+			<div class="postwarrow">
 				<div style="float: left">
 					&gt;&gt;&nbsp;&nbsp;
 				</div>
-				<div style="background-color: cyan; padding: 2px 2px 2px 2px; display:table">
-					<p>
+				<div class="postbox">
+					<div class="postheader">
 						{% if user.name %}
 							[ <a href="/delete_post/{{p.id}}">DELETE</a> ]
 						{% endif %}
-						<span style="color: blue">{{p.title}}</span>
-						<span style="color: green">{{p.name}}</span>
+						<span style="color: blue; font-weight:bold">{{p.name}}</span>
+						<span style="color: red; font-weight:bold">{{p.title}}</span>
 						{{p.title}} {{p.time}}
-						No. <a href="#">{{p.id}}</a>
-					</p>
-					<p>
+						No. <a href="/thread/{{p.ithread.id}}#{{p.id}}">{{p.id}}</a>
+					</div>
+					<div>
 						{% if p.origfile %}
 							File: {{p.origfile}} ({{p.imgfilesize()}} byte, {{p.imgsize()}})<br>
 							<a href="{{p.imgpath()}}"><img src="{{p.thumbpath()}}" style="float:left"></a>
 						{% endif %}
-						{{p.quotedpost(forceurl=True)|safe}}
-					</p>
-				</div>
-			</div>
+						<div class="posttext">
+							{{p.quotedpost(forceurl=True)|safe}}
+						</div>
+					</div>
+				</div><!--postbody-->
+			</div><!--post /w arrow-->
 		{% endif %}
 		<br>
 	{% endfor %}

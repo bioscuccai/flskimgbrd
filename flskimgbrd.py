@@ -30,6 +30,7 @@ app.config['THUMB_W']=200
 app.config['THUMB_H']=200
 app.config['ALLOWED_FILETYPES']=['png', 'jpeg']
 app.config['ALLOWED_EXTENSIONS']=['.png', '.jpg']
+app.config['PREVIEW_POSTS']=5
 db=SQLAlchemy(app)
 login_manager=LoginManager()
 login_manager.init_app(app)
@@ -47,9 +48,9 @@ class BoardForm(Form):
 	name=TextField('name')
 	short_name=TextField('short_name')
 class PostForm(Form):
-	name=TextField("name", validators=[DataRequired()])
-	title=TextField("title", validators=[Length(256)])
-	post=TextAreaField("post", validators=[Length(4096)])
+	name=TextField("name", validators=[DataRequired(),Length(max=256)])
+	title=TextField("title", validators=[Length(max=256)])
+	post=TextAreaField("post", validators=[Length(max=4096)])
 	image=FileField("image")
 #######################
 #######################
@@ -106,7 +107,7 @@ class Ipost(db.Model):
 	def quotedpost(self, forceurl=False):
 		escaped=Markup.escape(self.post)
 		reg=re.compile(r"&gt;&gt;\d+")
-		ess=str(escaped)
+		ess=unicode(escaped)
 		for m in set(reg.findall(ess)):
 			qn=m.replace("&gt;&gt;","")
 			qint=int(qn)
@@ -275,7 +276,9 @@ def addthread(board_name):
 				abort(404)
 			makethumb("%d%s"%(post.id, fileext))
 			db.session.commit()
-	return redirect("/thread/"+str(thr.id))
+			return redirect("/thread/"+str(thr.id))
+	flash("invalid form")
+	return redirect("/board/"+board_name)
 @app.route("/thread/<int:thread_id>")
 def showthread(thread_id):
 	form=PostForm()

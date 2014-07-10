@@ -22,17 +22,17 @@ new post:<br>
 {% endwith %}
 </div>
 {% with p=thr.iposts.first() %}
-	<p>
+	<div>
 		{% if user.name %}
 			[ <a href="/delete_thread/{{p.ithread.id}}">DELETE</a> ]
 		{% endif %}
-		<span style="color: blue">{{p.title}}</span>
-		<span style="color: green">{{p.name}}</span>
+		<span style="color: blue; font-weight:bold">{{p.name}}</span>
+		<span style="color: red; font-weight:bold">{{p.title}}</span>
 		{{p.title}} {{p.time}}
 		No. <a href="#">{{p.id}}</a>
-	</p>
+	</div>
 	{% if p.origfile %}
-		File: {{p.origfile}} ({{p.imgfilesize()}} byte, {{p.imgsize()}})<br>
+		<span style="font-weight: bold">File</span>: {{p.origfile}} ({{p.imgfilesize()}} byte, {{p.imgsize()}})<br>
 		<a href="{{p.imgpath()}}"><img src="{{p.thumbpath()}}" style="float:left"></a>
 	{% endif %}
 	{{p.quotedpost()}}
@@ -44,23 +44,25 @@ new post:<br>
 		<div style="float:left">
 		&gt;&gt;
 		</div>
-		<div style="background-color: cyan; padding: 2px 2px 2px 2px; display:table;">
-			<p>
+		<div class="postbox">
+			<div class="postheader">
 				{% if user.name %}
 					[ <a href="/delete_post/{{p.id}}">DELETE</a> ]
 				{% endif %}
-				<span style="color: blue">{{p.title}}</span>
-				<span style="color: green">{{p.name}}</span>
+				<span style="color: blue; font-weight:bold">{{p.name}}</span>
+				<span style="color: red; font-weight:bold">{{p.title}}</span>
 				{{p.time}}
 				No. <a href="#" class="pnclick">{{p.id}}</a>
-			</p>
-			<p>
-
-			{% if p.origfile %}
-				File: {{p.origfile}} ({{p.imgfilesize()}} byte, {{p.imgsize()}})<br>
-				<a href="{{p.imgpath()}}"><img src="{{p.thumbpath()}}" style="float:left"></a>
-			{% endif %}
-			{{p.quotedpost()|safe}}</p>
+			</div>
+			<div>
+				{% if p.origfile %}
+					<span style="font-weight: bold">File</span>: {{p.origfile}} ({{p.imgfilesize()}} byte, {{p.imgsize()}})<br>
+					<a href="{{p.imgpath()}}"><img src="{{p.thumbpath()}}" style="float:left"></a>
+				{% endif %}
+				<div class="posttext">
+					{{p.quotedpost()|safe}}
+				</div>
+			</div>
 		</div>
 	<div>
 	<br style="clear: both">
