@@ -36,7 +36,7 @@
 		{% if p.origfile %}
 			<a href="{{p.imgpath()}}"><img src="{{p.thumbpath()}}" style="float:left"></a>
 		{% endif %}
-		{{p.post}}
+		{{p.quotedpost(forceurl=True, cutlines=True)|safe}}
 		<div class="threadinfo">
 			{{t.iposts.count()}} posts in total
 		</div>
@@ -64,7 +64,7 @@
 							<a href="{{p.imgpath()}}"><img src="{{p.thumbpath()}}" style="float:left"></a>
 						{% endif %}
 						<div class="posttext">
-							{{p.quotedpost(forceurl=True)|safe}}
+							{{p.quotedpost(forceurl=True, cutlines=True)|safe}}
 						</div>
 					</div>
 				</div><!--postbody-->

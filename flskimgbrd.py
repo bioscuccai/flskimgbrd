@@ -22,6 +22,7 @@ SECRET_KEY="jkjlkjl"
 
 app=Flask(__name__)
 app.config.from_object(__name__)
+
 app.config['SQLALCHEMY_DATABASE_URI']="sqlite:///"+os.path.join(os.path.dirname(__name__), "c3.db")
 app.config['UPLOAD_FOLDER']=os.path.join(os.path.dirname(__name__), "uploads")
 app.config['THREADS_PER_PAGE']=5
@@ -31,6 +32,8 @@ app.config['THUMB_H']=200
 app.config['ALLOWED_FILETYPES']=['png', 'jpeg']
 app.config['ALLOWED_EXTENSIONS']=['.png', '.jpg']
 app.config['PREVIEW_POSTS']=5
+app.config['PREVIEW_LINES']=15
+
 db=SQLAlchemy(app)
 login_manager=LoginManager()
 login_manager.init_app(app)
@@ -104,7 +107,7 @@ class Ipost(db.Model):
 	def imgpath(self):
 		return os.path.join("/", app.config['UPLOAD_FOLDER'], "images", "%d%s"%(self.id, os.path.splitext(self.origfile)[1]))
 	
-	def quotedpost(self, forceurl=False):
+	def quotedpost(self, forceurl=False, cutlines=False):
 		escaped=Markup.escape(self.post)
 		reg=re.compile(r"&gt;&gt;\d+")
 		ess=unicode(escaped)
@@ -124,6 +127,11 @@ class Ipost(db.Model):
 				u.append("<span style='color: green'>"+s+"</span>")
 			else:
 				u.append(s)
+		#elolnezeti sorok levagasa
+		if cutlines and len(u)>app.config['PREVIEW_LINES']:
+			visible=u[0:app.config['PREVIEW_LINES']]
+			u=visible
+			visible.append("<br><small class='threadinfo'>Comment too long</small>")
 		ess="\n".join(u)
 		return Markup(ess.replace("\n", "<br>"))
 	
